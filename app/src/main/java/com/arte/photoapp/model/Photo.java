@@ -1,8 +1,6 @@
 package com.arte.photoapp.model;
 
 
-import java.io.Serializable;
-
 public class Photo {
 
     private String id;
@@ -31,7 +29,7 @@ public class Photo {
     }
 
     public String getUrl() {
-        return url;
+        return "https://placeholdit.imgix.net/~text?txtsize=56&bg=" + url.substring(url.length() - 6, url.length()) + "&txt=600x600&w=600&h=600";
     }
 
     public void setUrl(String url) {
@@ -39,7 +37,8 @@ public class Photo {
     }
 
     public String getThumbnailUrl() {
-        return thumbnailUrl;
+        return "https://placeholdit.imgix.net/~text?txtsize=14&bg=" + thumbnailUrl.substring(thumbnailUrl.length() - 6, thumbnailUrl.length()) + "&txt=HELLOWORLD&w=150&h=150";
+
     }
 
     public void setThumbnailUrl(String thumbnailUrl) {

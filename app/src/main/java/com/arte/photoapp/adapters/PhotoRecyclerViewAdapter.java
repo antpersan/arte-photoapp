@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.arte.photoapp.R;
-import com.arte.photoapp.model.Photo;
+import com.arte.photoapp.model.Character;
 import com.arte.photoapp.network.RequestQueueManager;
 
 import java.util.List;
@@ -17,15 +17,15 @@ import java.util.List;
 public class PhotoRecyclerViewAdapter extends RecyclerView.Adapter<PhotoRecyclerViewAdapter.ViewHolder> {
 
     public interface Events {
-        void onPhotoClicked(Photo photo);
+        void onPhotoClicked(Character character);
     }
 
-    private final List<Photo> mPhotoList;
+    private final List<Character> mCharacterList;
     private Events mEvents;
     private Context mContext;
 
-    public PhotoRecyclerViewAdapter(List<Photo> items, Context context, Events events) {
-        mPhotoList = items;
+    public PhotoRecyclerViewAdapter(List<Character> items, Context context, Events events) {
+        mCharacterList = items;
         mContext = context;
         mEvents = events;
     }
@@ -39,20 +39,20 @@ public class PhotoRecyclerViewAdapter extends RecyclerView.Adapter<PhotoRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Photo photo = mPhotoList.get(position);
-        holder.mTitle.setText(photo.getTitle());
-        holder.mThumbnail.setImageUrl(photo.getThumbnailUrl(), RequestQueueManager.getInstance(mContext).getImageLoader());
+        final Character character = mCharacterList.get(position);
+        holder.mTitle.setText(character.getName());
+        holder.mThumbnail.setImageUrl(character.getThumbnailUrl(), RequestQueueManager.getInstance(mContext).getImageLoader());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEvents.onPhotoClicked(photo);
+                mEvents.onPhotoClicked(character);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mPhotoList.size();
+        return mCharacterList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

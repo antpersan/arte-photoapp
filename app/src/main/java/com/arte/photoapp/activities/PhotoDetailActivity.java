@@ -1,6 +1,5 @@
 package com.arte.photoapp.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -13,8 +12,6 @@ import com.arte.photoapp.R;
 import com.arte.photoapp.fragments.PhotoDetailFragment;
 
 public class PhotoDetailActivity extends AppCompatActivity {
-
-    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +39,6 @@ public class PhotoDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage(getString(R.string.photo_list_loading));
-        mProgressDialog.show();
-        // TODO mProgressDialog should be hidden when network request finishes
     }
 
     private void setupFragment(Bundle savedInstanceState) {
@@ -55,7 +47,8 @@ public class PhotoDetailActivity extends AppCompatActivity {
         }
 
         Bundle fragmentArguments = new Bundle();
-        fragmentArguments.putString(PhotoDetailFragment.ARG_PHOTO_ID, getIntent().getStringExtra(PhotoDetailFragment.ARG_PHOTO_ID));
+        String characterDetailUrl = getIntent().getStringExtra(PhotoDetailFragment.ARG_CHARACTER_DETAIL_URL);
+        fragmentArguments.putString(PhotoDetailFragment.ARG_CHARACTER_DETAIL_URL, characterDetailUrl);
         PhotoDetailFragment fragment = new PhotoDetailFragment();
         fragment.setArguments(fragmentArguments);
         getSupportFragmentManager().beginTransaction()

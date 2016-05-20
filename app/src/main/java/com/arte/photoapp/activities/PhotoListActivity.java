@@ -10,15 +10,17 @@ import android.support.v7.widget.Toolbar;
 import com.arte.photoapp.R;
 import com.arte.photoapp.adapters.PhotoRecyclerViewAdapter;
 import com.arte.photoapp.fragments.PhotoDetailFragment;
-import com.arte.photoapp.model.Photo;
+import com.arte.photoapp.model.Character;
+import com.arte.photoapp.network.GetPhotoListRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoListActivity extends AppCompatActivity implements PhotoRecyclerViewAdapter.Events {
+public class PhotoListActivity extends AppCompatActivity implements PhotoRecyclerViewAdapter.Events,
+        GetPhotoListRequest.Callbacks {
 
     private boolean mTwoPane;
-    private List<Photo> mPhotoList = new ArrayList<>();
+    private List<Character> mCharacterList = new ArrayList<>();
     private PhotoRecyclerViewAdapter mAdapter;
     private ProgressDialog mProgressDialog;
 
@@ -31,10 +33,16 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoRecycle
     }
 
     @Override
-    public void onPhotoClicked(Photo photo) {
+    protected void onPause() {
+        super.onPause();
+        mProgressDialog.dismiss();
+    }
+
+    @Override
+    public void onPhotoClicked(Character character) {
         if (mTwoPane) {
             Bundle fragmentArguments = new Bundle();
-            fragmentArguments.putString(PhotoDetailFragment.ARG_PHOTO_ID, photo.getId());
+            fragmentArguments.putString(PhotoDetailFragment.ARG_CHARACTER_DETAIL_URL, character.getDetailUrl());
             PhotoDetailFragment fragment = new PhotoDetailFragment();
             fragment.setArguments(fragmentArguments);
             getSupportFragmentManager().beginTransaction()
@@ -42,7 +50,7 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoRecycle
                     .commit();
         } else {
             Intent intent = new Intent(this, PhotoDetailActivity.class);
-            intent.putExtra(PhotoDetailFragment.ARG_PHOTO_ID, photo.getId());
+            intent.putExtra(PhotoDetailFragment.ARG_CHARACTER_DETAIL_URL, character.getDetailUrl());
             startActivity(intent);
         }
     }
@@ -55,7 +63,7 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoRecycle
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.photo_list);
         assert recyclerView != null;
-        mAdapter = new PhotoRecyclerViewAdapter(mPhotoList, this, this);
+        mAdapter = new PhotoRecyclerViewAdapter(mCharacterList, this, this);
         recyclerView.setAdapter(mAdapter);
 
         if (findViewById(R.id.photo_detail_container) != null) {
@@ -65,12 +73,25 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoRecycle
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage(getString(R.string.photo_detail_loading));
         mProgressDialog.show();
-        // TODO mProgressDialog should be hidden when network request finishes
     }
 
 
     private void loadPhotos() {
-        // TODO start network request to get photos from API
+        GetPhotoListRequest getPhotoListRequest = new GetPhotoListRequest(this, this);
+        getPhotoListRequest.execute();
     }
 
+    @Override
+    public void onGetPhotoListSuccess(List<Character> characterList) {
+        mProgressDialog.hide();
+        mCharacterList.clear();
+        mCharacterList.addAll(characterList);
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onGetPhotoListError() {
+        mProgressDialog.hide();
+    }
 }
